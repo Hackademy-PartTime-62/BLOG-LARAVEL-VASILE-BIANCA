@@ -11,7 +11,9 @@ Route::get('/', function () {
 
 // Articoli
 Route::get('/articoli', [ArticleController::class, 'index'])->name('articoli.index');
-Route::get('/articoli/{id}', [ArticleController::class, 'show'])->name('articoli.show');
+Route::get('/articoli/create', [ArticleController::class, 'create'])->name('articoli.create'); // form creazione
+Route::post('/articoli', [ArticleController::class, 'store'])->name('articoli.store');         // salvataggio
+Route::get('/articoli/{article}', [ArticleController::class, 'show'])->name('articoli.show');
 
 // Contatti
 Route::get('/contatti', [ContactController::class, 'create'])->name('contacts.create'); // mostra il form
