@@ -1,107 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Elenco articoli</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8fafc;
-            color: #333;
-            margin: 40px;
-        }
+@extends('layouts.app')
 
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 40px;
-        }
+@section('content')
+<div class="container py-5">
+    <h1 class="text-center mb-4">📰 Tutti gli Articoli</h1>
 
-        .articles {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+    @if ($articles->isEmpty())
+        <p class="text-center text-muted">Nessun articolo disponibile al momento.</p>
+    @else
+        <div class="row justify-content-center">
+            @foreach ($articles as $article)
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        {{-- Immagine articolo --}}
+                        @if ($article->image_path)
+                            <img src="{{ asset('storage/' . $article->image_path) }}" class="card-img-top" alt="Immagine articolo">
+                        @else
+                            <img src="https://via.placeholder.com/400x200?text=Placeholder" class="card-img-top" alt="Placeholder">
+                        @endif
 
-        .card {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 15px;
-            transition: transform 0.2s ease;
-        }
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $article->title }}</h5>
+                            <p><strong>Categoria:</strong> {{ $article->category ?? 'Senza categoria' }}</p>
+                            <p class="card-text text-truncate">{{ $article->content }}</p>
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+                            <a href="{{ route('articoli.show', $article->id) }}" class="btn btn-primary">
+                                Leggi di più
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .card h2 {
-            font-size: 1.2rem;
-            margin: 10px 0 5px;
-            color: #34495e;
-        }
-
-        .card p {
-            font-size: 0.95rem;
-            color: #555;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #3498db;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: background-color 0.2s ease;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-        }
-
-        .add-btn {
-            display: inline-block;
-            margin-bottom: 25px;
-            background-color: #2ecc71;
-        }
-
-        .add-btn:hover {
-            background-color: #27ae60;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Elenco articoli</h1>
-
-    <a href="{{ route('articoli.create') }}" class="btn add-btn">+ Crea nuovo articolo</a>
-
-    <div class="articles">
-        @foreach($articoli as $article)
-            <div class="card">
-                @if($article->image_path)
-                    <img src="{{ Storage::url($article->image_path) }}" alt="Immagine di {{ $article->title }}">
-                @else
-                    <img src="https://picsum.photos/400/200?random={{ $article->id }}" alt="Immagine casuale">
-                @endif
-
-                <h2>{{ $article->title }}</h2>
-                <p><strong>Categoria:</strong> {{ $article->category }}</p>
-                <p>{{ Str::limit($article->body, 100) }}</p>
-
-                <a href="{{ route('articoli.show', $article->id) }}" class="btn">Leggi di più</a>
-            </div>
-        @endforeach
+    <div class="text-center mt-4">
+        <a href="{{ route('home') }}" class="btn btn-outline-secondary">
+            🏠 Torna alla Home
+        </a>
     </div>
-
-</body>
-</html>
+</div>
+@endsection

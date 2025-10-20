@@ -23,7 +23,7 @@ class ArticleController extends Controller
         return view('articles.show', compact('article'));
     }
 
-    // Mostra form creazione
+    // Mostra form di creazione
     public function create()
     {
         return view('articles.create');

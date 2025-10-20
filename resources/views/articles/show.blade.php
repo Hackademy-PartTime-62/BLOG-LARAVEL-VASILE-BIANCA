@@ -1,13 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
+    <meta charset="UTF-8">
     <title>{{ $article->title }}</title>
     <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8fafc;
+            padding: 40px;
+            text-align: center;
+        }
         img {
-            max-width: 100%;
-            height: auto;
-            display: block;
+            max-width: 500px;
+            border-radius: 16px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        p {
+            max-width: 600px;
+            margin: 10px auto;
+            line-height: 1.5;
+            color: #444;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -15,17 +42,12 @@
     <h1>{{ $article->title }}</h1>
 
     @if($article->image_path)
-        <div>
-            <img src="{{ Storage::url($article->image_path) }}" alt="Immagine di {{ $article->title }}">
-        </div>
+        <img src="{{ Storage::url($article->image_path) }}" alt="Immagine articolo">
     @endif
 
     <p><strong>Categoria:</strong> {{ $article->category }}</p>
+    <p>{!! nl2br(e($article->body)) !!}</p>
 
-    <div>
-        <strong>Contenuto:</strong> {!! nl2br(e($article->body)) !!}
-    </div>
-
-    <p><a href="{{ route('articoli.index') }}">← Torna all’elenco</a></p>
+    <a href="{{ route('articoli.index') }}" class="back-link">← Torna all’elenco</a>
 </body>
 </html>
