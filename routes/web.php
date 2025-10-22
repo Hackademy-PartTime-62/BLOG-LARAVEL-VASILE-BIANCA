@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CategoryController;
 
 // 🏠 Home pubblica
 Route::get('/', function () {
@@ -33,3 +34,5 @@ Route::middleware('auth')->group(function () {
 // 🔐 Login & Registrazione (Fortify gestisce il logout)
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
+
+Route::resource('categories', CategoryController::class);Route::resource('articoli', App\Http\Controllers\ArticleController::class);

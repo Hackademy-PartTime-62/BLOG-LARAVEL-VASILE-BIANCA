@@ -34,7 +34,8 @@
 
         input[type="text"],
         textarea,
-        input[type="file"] {
+        input[type="file"],
+        select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -89,7 +90,12 @@
         <input type="text" id="title" name="title" required>
 
         <label for="category">Categoria:</label>
-        <input type="text" id="category" name="category" required>
+        <select id="category" name="category" required>
+            <option value="">-- Seleziona una categoria --</option>
+            @foreach($categories as $category)
+                <option value="{{ $category->name }}">{{ $category->name }}</option>
+            @endforeach
+        </select>
 
         <label for="body">Contenuto:</label>
         <textarea id="body" name="body" required></textarea>

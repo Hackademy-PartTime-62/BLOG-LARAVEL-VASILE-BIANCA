@@ -1,58 +1,91 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Category;
 use App\Models\Article;
-use App\Http\Requests\StoreArticleRequest;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+
 
 class ArticleController extends Controller
 {
-    // Lista articoli
+    // Mostra elenco articoli
     public function index()
     {
         $articles = Article::all();
         return view('articles.index', compact('articles'));
     }
 
-    // Dettaglio articolo
-    public function show($id)
+    // Mostra form creazione articolo
+    public function create()
     {
-        $article = Article::findOrFail($id);
+        $categories = Category::all(); // Recupera tutte le categorie
+        return view('articles.create', compact('categories'));
+    }
+
+    // Salva un nuovo articolo
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'body' => 'required|string',
+            'image' => 'nullable|image|max:2048'
+        ]);
+
+        $data = $request->all();
+
+        // Se c'è un'immagine, la salviamo
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $data['image_path'] = $path;
+        }
+
+        Article::create($data);
+
+        return redirect()->route('articoli.index')->with('success', 'Articolo creato con successo!');
+    }
+
+    // Mostra un singolo articolo
+    public function show(Article $article)
+    {
         return view('articles.show', compact('article'));
     }
 
-    // Mostra form di creazione
-    public function create()
+    // Mostra form modifica articolo
+    public function edit(Article $article)
     {
-        return view('articles.create');
+        $categories = Category::all();
+        return view('articles.edit', compact('article', 'categories'));
     }
 
-    // Salva nuovo articolo
-    public function store(StoreArticleRequest $request)
+    // Aggiorna articolo
+    public function update(Request $request, Article $article)
     {
-        // Prendo i dati validati dal FormRequest
-        $data = $request->validated();
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'body' => 'required|string',
+            'image' => 'nullable|image|max:2048'
+        ]);
 
-        // Se è stata caricata un'immagine valida
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            // Creo un nome unico con il timestamp + estensione
-            $filename = time() . '.' . $request->file('image')->extension();
+        $data = $request->all();
 
-            // Salvo in storage/app/public/articles
-            $imagePath = $request->file('image')->storeAs('articles', $filename, 'public');
-
-            // Aggiungo il path ai dati da salvare nel DB
-            $data['image_path'] = $imagePath;
+        // Se viene caricata una nuova immagine, aggiorna il percorso
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $data['image_path'] = $path;
         }
 
-        // Creo l'articolo con i dati (inclusa l'immagine se presente)
-        Article::create($data);
+        $article->update($data);
 
-        // Redirect con messaggio di successo
-        return redirect()
-            ->route('articoli.create')
-            ->with(['success' => 'Articolo creato con successo!']);
+        return redirect()->route('articoli.index')->with('success', 'Articolo aggiornato con successo!');
+    }
+
+    // Elimina articolo
+    public function destroy(Article $article)
+    {
+        $article->delete();
+
+        return redirect()->route('articoli.index')->with('success', 'Articolo eliminato con successo!');
     }
 }
